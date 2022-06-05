@@ -39,12 +39,13 @@
 
 <body>
 
+    
   <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">
 
     <div class="d-flex align-items-center justify-content-between">
       <!-- <a href="index.html" class="logo d-flex align-items-center"> -->
-        <img src="../static/assets/img/logos/COCOBASTA.png" alt="Logo">
+        <img src="/Users/UTENTE/Documents/Coco Cumbi SW/static/assets/img/logos/COCOBASTA.png" alt="Logo">
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->
@@ -70,24 +71,18 @@
         <li class="nav-item dropdown pe-3">
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="/logout" data-bs-toggle="dropdown">
-            <img src="../static/assets/img/logos/COCOSOLOLOGOsmall.png" alt="Profile" class="rounded-circle">
-            <span class="d-none d-md-block dropdown-toggle ps-2">Sign Out</span>
+            <img src="/Users/UTENTE/Documents/Coco Cumbi SW/static/assets/img/logos/COCOSOLOLOGOsmall.png" alt="Profile" class="rounded-circle">
+            <span class="d-none d-md-block dropdown-toggle ps-2"> Log Out </span>
           </a><!-- End Profile Image Icon -->
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
-              <h6>{{ NAME }}</h6>
-            
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-        
+              <h6>Actions</h6>      
           
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="#">
+              <a class="dropdown-item d-flex align-items-center" href="/logout">
                 <i class="bi bi-box-arrow-right"></i>
-                <span>Sign Out</span>
+                <span> Sign Out</span>
               </a>
             </li>
 
@@ -145,7 +140,6 @@
           <span>Team</span>
         </a>
       </li><!-- Team -->
-
     </ul>
 
   </aside><!-- End Sidebar-->
@@ -153,83 +147,35 @@
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Our Team</h1>
-      <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/home">Home</a></li>
-          <li class="breadcrumb-item active">Team</li>
-        </ol>
-      </nav>
+      <h1>Dashboard</h1>
     </div><!-- End Page Title -->
 
-    <section class="section">
+    <section class="section dashboard">
       <div class="row">
-        <div class="col-lg-3">          
-          <div class="card">
-            <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
-              <img src="../static/assets/img/stefano1.jpg" alt="Profile" class="rounded-circle" height="125">
-              <br>
-              <center><h3>Stefano Brazzoli</h3></center>
-              <h6>Back-End Developer</h6>
-              <div class="social-links mt-2">
-                <a href="#" class="github"><i class="bi bi-github"></i></a>
-                <a href="https://www.linkedin.com/in/stefano-brazzoli-853a88204/" class="linkedin"><i class="bi bi-linkedin"></i></a>
+        <!-- Left side columns -->
+        <div class="col-lg-12">
+          <div class="row">
+
+            <!-- QUERY RESULTS -->
+            <center><div class="col-12">
+              <div class="card">
+                <div class="card-body">
+                  <center><h1 class="card-title">Query Results </h1></center>
+
+                    <h6>
+                      {% for table in tables %}
+                      {{table|safe}}
+                      {% endfor %}
+                    </h6>
+
+                </div>
               </div>
-            </div>
-          </div>         
-        </div>
-
-        <div class="col-lg-3">
-          <div class="card">
-            <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
-
-              <img src="../static/assets/img/martina.jpg" alt="Profile" class="rounded-circle" height="125">
-              <br>
-              <center><h3>Martina Esposito</h3></center>
-              <h6>Back-End Developer</h6>
-              <div class="social-links mt-2">
-                <a href="https://github.com/martinaess" class="github"><i class="bi bi-github"></i></a>
-                <a href="https://www.linkedin.com/in/martina-giovanna-esposito-2b7603190/" class="linkedin"><i class="bi bi-linkedin"></i></a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-lg-3">
-
-          <div class="card">
-            <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
-
-              <img src="../static/assets/img/mattia.jpg" alt="Profile" class="rounded-circle" height="125">
-              <br>
-              <center><h3>Mattia Koren</h3></center>
-              <h6>Full-Stack Developer</h6>
-              <br>
-              <div class="social-links mt-2">
-                <a href="#" class="github"><i class="bi bi-github"></i></a>
-                <a href="https://www.linkedin.com/in/mattia-koren-b7a4ba22a/" class="linkedin"><i class="bi bi-linkedin"></i></a>
-              </div>
-            </div>
+            </div></center>
           </div>     
-        </div>
+        </div><!-- End Left side columns -->
 
-        <div class="col-lg-3">
-          <div class="card">
-            <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
-              <img src="../static/assets/img/gaia.jpg" alt="Profile" class="rounded-circle" height="125">
-              <br>
-              <center><h3>Gaia Vallarino</h3></center>
-              <h6>Front-End Developer</h6>
-              <br>
-              <div class="social-links mt-2">
-                <a href="https://github.com/gaiavallarino" class="github"><i class="bi bi-github"></i></a>
-                <a href="https://www.linkedin.com/in/gaiavallarino" class="linkedin"><i class="bi bi-linkedin"></i></a>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -267,3 +213,5 @@
 </body>
 
 </html>
+  
+    

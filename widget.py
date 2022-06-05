@@ -20,7 +20,7 @@ from bokeh.io import curdoc, output_notebook, show
 from bokeh.embed import components
 from bokeh.layouts import row
 #output_notebook()
-from bokeh.resources import INLINE
+from bokeh.resources import INLINE, CDN
 output_notebook(INLINE)
 
 #database connection..
@@ -109,8 +109,8 @@ trees_mercator = wgs84_to_web_mercator(trees,'longitude','latitude')
 
 #Define variables
 #names = trees['commonName'].unique().tolist()
-trees_names_complete = trees_mercator.groupby('commonName', axis=0, as_index=False).median()
-trees_names = trees_names_complete.drop(['commonName','treeID','latitude','longitude','utmNorthing','utmEasting','x','y'], axis=1).copy()
+trees_names = trees_mercator.groupby('commonName', axis=0, as_index=False).median()
+#trees_names = trees_names_complete.drop(['commonName','treeID','latitude','longitude','utmNorthing','utmEasting','x','y'], axis=1).copy()
 names = list(trees_names.index)
 quantity = ColumnDataSource({'x' : names, 'y': list(trees_names['dbh'].round(decimals=2))})
 # Create Select Widget menu options
@@ -136,7 +136,8 @@ select_widget.on_change('value', callback)
 # Create the plot layout by merging the bar plot and the widget
 layout = row(select_widget, p2)
 # Display the plot
-show(layout)
+#show(layout)
+#output_file(r"C:\Users\marti\OneDrive\Polimi\1 ANNO MAGISTRALE\SOFTWARE ENGINEERING FOR GEOINFORMATICS\barplot.html")
 # Add the layout to the current Document displayed in the Browser
 curdoc().add_root(layout)
 
