@@ -5,31 +5,27 @@ Created on Sun May 29 23:13:58 2022
 @author: marti
 """
 
-import numpy as np
-import matplotlib.pyplot as plt
-from psycopg2 import (connect)
-from sqlalchemy import create_engine
-import requests
-import json
-import pandas as pd
 import geopandas as gpd
-from bokeh.models import ColumnDataSource, LabelSet, Select
-from bokeh.plotting import figure, output_file
+from bokeh.models import ColumnDataSource, LabelSet
+from bokeh.plotting import figure
 from bokeh.tile_providers import CARTODBPOSITRON, get_provider # CARTODBPOSITRON_RETINA
-from bokeh.io import curdoc, output_notebook, show
-from bokeh.embed import components
-from bokeh.layouts import row
+from bokeh.io import output_notebook
 #output_notebook()
 from bokeh.resources import INLINE
 output_notebook(INLINE)
-from connection import insert_df
+#from connection import insert_df
+from connection import engine
+#from connection import trees
+#from prova import trees
 
+"""IMPORTING DATA"""
 # import geo data
-engine = insert_df()
+#engine = insert_df()
 trees = gpd.GeoDataFrame.from_postgis('trees', engine, geom_col='geometry')
 trees = trees.drop('geometry', axis=1).copy()
 
 
+"""MAP"""
 #Use the dataframe as Bokeh ColumnDataSource
 psource = ColumnDataSource(trees)
 #Specify feature of the Hover tool

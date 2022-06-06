@@ -21,9 +21,10 @@ from bokeh.embed import components, server_document
 from bokeh.resources import INLINE
 output_notebook(INLINE)
 import subprocess
-from connection import insert_df
+#from connection import insert_df
+from connection import engine
 from map_correct import p1
-
+#from prova import trees
 
 
 """FUNCTIONS"""
@@ -167,12 +168,17 @@ def searchsector(worser,df):
 
 
 
+
+
+
+
+
+
 """FLASK APPLICATION"""
 # import geo data
-engine = insert_df()
+#engine = insert_df()
 trees = gpd.GeoDataFrame.from_postgis('trees', engine, geom_col='geometry')
 trees = trees.drop('geometry', axis=1).copy()
-currdf= trees
 # Create the application instance
 app = Flask(__name__, template_folder="templates")
 # Set the secret key 
@@ -257,6 +263,7 @@ def login():
             session.clear()
             session['email'] = user[0]
             return redirect(url_for('home'))
+        return render_template('aaerror.html',error=error)
     return render_template('aalogin.html')
 
 #cookies
@@ -305,41 +312,35 @@ def query():
         hmax=(request.form['hmax'])
         cmin=(request.form['cmin'])
         cmax=(request.form['cmax'])
-        #dbhmin=(request.form['dbhmin'])
-        #dbhmax=(request.form['dbhmax'])
+        dbhmin=(request.form['dbhmin'])
+        dbhmax=(request.form['dbhmax'])
         nameser=request.form['nameser']
         groupser=request.form['groupser']
         sectorser=request.form['sectorser']
         areaser=request.form['areaser']
-        #import data from epicollect and preprocessing dataframe
-        response = requests.get('https://five.epicollect.net/api/export/entries/censo-forestal-del-canton-ruminahui?per_page=100')
-        raw_data = response.text
-        data = json.loads(raw_data)
-        data_df = pd.json_normalize(data['data']['entries'])
-        data_df = data_df.iloc[: ,4:].copy()
-        data_df.columns = ['treeID','date','censusArea','group','commonName','scientificName','status','writtenCoordinates','dbh','height','crownDiameter','crownRadius','sector','property','risk','latitude','longitude','accuracy','utmNorthing','utmEasting','utmZone']
         #query
-        queryres=data_df
+        queryres=trees
         queryres=heightrange(hmax, hmin, queryres)
         queryres=crownrange(cmax, cmin, queryres)
-        #queryres=dbhrange(dbhmax, dbhmin, queryres)
+        queryres=dbhrange(dbhmax, dbhmin, queryres)
         queryres=searchname(nameser, queryres)
         queryres=searchgroup(groupser, queryres)
         queryres=searchsector(sectorser, queryres)
-        queryres=searcharea(areaser, queryres) 
-        currdf=queryres
-        return render_template('newqueryresults.html',tables=[queryres.to_html(classes='data',header="true")])        
+        queryres=searcharea(areaser, queryres)
+        if queryres.empty == False:
+            shan=shannon(queryres)
+            simp=simpson(queryres)
+            stat=statistics(queryres)
+            queryres.columns=['TreeID','Census area','Group','Name','Scientific name','Status','DBH(m)','Height(m)','Crown diameter(m)','Sector','Risk','latitude','longitude','accuracy','X','Y']
+            return render_template('newqueryresults.html',tables=[queryres.to_html(classes='data',header="true")],shan=shan,simp=simp,stat=stat)        
+        error='Empty Dataframe'
+        return render_template('aaerror.html',error=error)
     return render_template('newquery.html')
 
-@app.route('/graphs')
-def graphs():
-    if currdf is not None:
-        shan=shannon(currdf)
-        simp=simpson(currdf)
-        stat=statistics(currdf)
-        return render_template('aagraphs.html',shan=shan,simp=simp,stat=stat)
-    error='Empty Dataframe'
-    return render_template('error.html',error=error)
+@app.route('/team', methods=[('GET')])
+def team():
+    return render_template("aateam.html")
+
 
 @app.route('/barplot', methods=[('GET')])
 def barplot():
@@ -357,6 +358,6 @@ if __name__ == '__main__':
     bash_command('bokeh serve ./widget.py --allow-websocket-origin=127.0.0.1:5000')
     bash_command('bokeh serve ./map_correct.py --allow-websocket-origin=127.0.0.1:5000 --port=5007')
     app.run(debug=True)
-    
+     
 
 

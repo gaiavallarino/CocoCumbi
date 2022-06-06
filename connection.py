@@ -7,45 +7,27 @@ Created on Sun Jun  5 21:36:40 2022
 
 # -*- coding: utf-8 -*-
 
-""" IMPORTING LIBRARIES"""
+""" IMPORTING LIBRARIES AND PACKAGES"""
 # import packages needed to Perform a REST API JSON data request with Python
-from flask import (
-    Flask, render_template, request, redirect, flash, url_for, session, g, abort
-)
-from math import log2
-from werkzeug.security import check_password_hash, generate_password_hash
-from werkzeug.exceptions import abort
-from psycopg2 import (
-        connect
-)
+from psycopg2 import (connect)
 from sqlalchemy import create_engine 
 import numpy as np
-import pyproj
 import pandas as pd
 import geopandas as gpd
 import requests
 import json
-import matplotlib.pyplot as plt
-from psycopg2 import (connect)
-from sqlalchemy import create_engine
-import requests
-import json
-import pandas as pd
-import geopandas as gpd
-from bokeh.models import ColumnDataSource, LabelSet, Select, HoverTool
-from bokeh.plotting import figure, output_file
-from bokeh.tile_providers import CARTODBPOSITRON, get_provider # CARTODBPOSITRON_RETINA
-from bokeh.io import curdoc, output_notebook, show
-from bokeh.embed import components, server_document
-from bokeh.layouts import row
+from bokeh.io import output_notebook
 #output_notebook()
-from bokeh.resources import INLINE, CDN
+from bokeh.resources import INLINE
 output_notebook(INLINE)
-import subprocess
 
 """FUNCTIONS"""
-
-
+#convert from LAT/LNG to Mercator
+def wgs84_to_web_mercator(df, lon="LON", lat="LAT"):
+      k = 6378137
+      df["x"] = np.float64(df[lon] * (k * np.pi/180.0))
+      df["y"] = np.log(np.tan((90 + np.float64(df[lat])) * np.pi/360.0)) * k
+      return df
 
 """SETTING DATABASE CONNECTION"""
 def insert_df():
@@ -115,12 +97,10 @@ def insert_df():
     data_geodf_proc.to_crs = {'init': 'epsg:32617'}
     
     #convert from LAT/LNG to Mercator
-    def wgs84_to_web_mercator(df, lon="LON", lat="LAT"):
-          k = 6378137
-          df["x"] = np.float64(df[lon] * (k * np.pi/180.0))
-          df["y"] = np.log(np.tan((90 + np.float64(df[lat])) * np.pi/360.0)) * k
-          return df
     data_geodf_proc = wgs84_to_web_mercator(data_geodf_proc,'longitude','latitude')# write the dataframe into postgreSQL
     data_geodf_proc.to_postgis('trees', engine, if_exists = 'replace', index=False)
     #data_geodf_proc = data_geodf_proc.drop('geometry', axis=1).copy()
     return engine
+
+engine = insert_df()
+#trees = gpd.GeoDataFrame.from_postgis('trees', engine, geom_col='geometry')
