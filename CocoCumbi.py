@@ -17,18 +17,14 @@ import requests
 import json
 from bokeh.io import output_notebook
 from bokeh.embed import components, server_document
-#output_notebook()
 from bokeh.resources import INLINE
 output_notebook(INLINE)
 import subprocess
-#from connection import insert_df
 from connection import engine
 from map_correct import p1
-#from prova import trees
-
 
 """FUNCTIONS"""
-#this allows the bokeh app running on port 5006 to be accessed by Flask at port 5000
+#this allows the bokeh app running on port 5006/5007 to be accessed by Flask at port 5000
 def bash_command(cmd):
     subprocess.Popen(cmd, shell=True)
     
@@ -167,16 +163,8 @@ def searchsector(worser,df):
     return s
 
 
-
-
-
-
-
-
-
 """FLASK APPLICATION"""
-# import geo data
-#engine = insert_df()
+# Import geo data
 trees = gpd.GeoDataFrame.from_postgis('trees', engine, geom_col='geometry')
 trees = trees.drop('geometry', axis=1).copy()
 # Create the application instance
@@ -337,17 +325,19 @@ def query():
         return render_template('aaerror.html',error=error)
     return render_template('newquery.html')
 
+# team information page
 @app.route('/team', methods=[('GET')])
 def team():
     return render_template("aateam.html")
 
-
+# barplot page
 @app.route('/barplot', methods=[('GET')])
 def barplot():
     script =server_document("http://localhost:5006/widget")
     print(script)
     return render_template("aagraphs.html", script=script)
 
+#map page
 @app.route('/map', methods=[('GET')])
 def intmap():
     p1_script, p1_div = components(p1)
